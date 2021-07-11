@@ -1,0 +1,34 @@
+version: "3.9"
+services:
+    db:
+        container_name: db-inafeteria
+        image: mysql:8.0
+        ports:
+            - "3306:3306"
+        volumes:
+            - ./db-data:/var/lib/mysql
+            - ./inicio_bd:/docker-entrypoint-initdb.d
+        restart: always
+        environment:
+            MYSQL_ROOT_PASSWORD: 123456
+            MYSQL_DATABASE: inafeteria_db
+            MYSQL_USER: inafeteria
+            MYSQL_PASSWORD: inafeteria1234
+        networks:
+            - net-inafeteria
+    web:
+        container_name: web-inafeteria
+        depends_on: 
+            - db
+        ports:
+            - "8082:80"
+        volumes:
+            - ./:/var/www/html
+        image: inafeteria-php8
+        build:
+            context: .
+            dockerfile: Dockerfile
+        networks:
+            - net-inafeteria
+networks:
+    net-inafeteria:
